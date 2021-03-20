@@ -1,0 +1,1 @@
+isql -U user -P password -D database -S server -w 2000 -i query1.sql
