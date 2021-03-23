@@ -1,26 +1,49 @@
 ##########################################################
-# Skrypt PAR2 wer. 1.1
+# Skrypt PAR2 wer. 1.2
 # Autor: Grzegorz Okoń - główny specjalista
 #
 # Wykonanie komend sql i zapis wyniku do pliku archiwum.
 #
 # Uruchomienie skryptu następuje komendą:
-# perl PAR2.pl plik1.bat plik2.bat ...
+# perl PAR2.pl -i plik1.bat plik2.bat ...
 ##########################################################
 
 use strict;
 use warnings;
 
-foreach my $argnum (0 .. $#ARGV) {
-	my $filename = &create_output_filename($ARGV[$argnum]);
-	open FILE, "$ARGV[$argnum]|";
-	open OUTPUT, ">>./history/$filename" || die "can't create a file";
-	open OUTPUT, ">>./history/$filename" || die "can't save to a file";
-	while (<FILE>) {
-		print OUTPUT $_;
+my @input = ();
+
+&handle_arguments;
+&execute;
+
+sub handle_arguments {
+	foreach my $argnum (0 .. $#ARGV) {
+		if (substr($ARGV[$argnum], 0, 1) eq "-") {
+			if (substr($ARGV[$argnum], 1, 1) eq "i") {
+				for (my $i = $argnum + 1; $i <= $#ARGV; $i++) {
+					if (substr($ARGV[$i], 0, 1) ne "-") {
+						push (@input, $ARGV[$i]);
+					} else {
+						last;
+					}
+				}
+			}
+		}			
 	}
-	close FILE;
-   	close OUTPUT;
+}
+
+sub execute {
+	foreach (@input) {
+		my $filename = &create_output_filename($_);
+		open FILE, "$_|";
+		open OUTPUT, ">>./history/$filename" || die "can't create a file";
+		open OUTPUT, ">>./history/$filename" || die "can't save to a file";
+		while (<FILE>) {
+			print OUTPUT $_;
+		}
+		close FILE;
+		close OUTPUT;
+	}	
 }
 
 sub create_output_filename {
