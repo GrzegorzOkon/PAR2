@@ -1,1 +1,1 @@
-perl PAR2.pl -i table1.bat table2.bat
+perl PAR2.pl -i table1.bat table2.bat -h 7
